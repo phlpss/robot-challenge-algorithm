@@ -91,5 +91,36 @@ namespace FilipKateryna.RobotChallange
                 .OrderBy(pos => EnergyToMove(robotPosition, pos))
                 .FirstOrDefault();
         }
+
+        public static (int Profit, RobotCommand Command) CalculateAttackProfit(IList<Robot.Common.Robot> robots, Robot.Common.Robot movingRobot)
+        {
+            var (robotToAttack, profit) = FindBestRobotToAttack(robots, movingRobot);
+            return profit > 0 ? (profit, new MoveCommand { NewPosition = robotToAttack.Position }) : (0, null);
+        }
+
+        public static (int Profit, RobotCommand Command) CalculateStationMoveProfit(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots, bool nearest)
+        {
+            var station = nearest
+                ? FindNearestFreeStation(movingRobot, map, robots)
+                : FindBestFreeStation(movingRobot, map, robots);
+
+            if (station == null) return (0, null);
+
+            var profit = ProfitFromStationMove(movingRobot, station.Position, station.Energy);
+            var targetPosition = FindNearestCollectablePosition(movingRobot.Position, station.Position, 2);
+
+            return (profit, new MoveCommand { NewPosition = targetPosition });
+        }
+
+        public static RobotCommand MoveCloserToStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
+        {
+            var nearestStation = FindNearestFreeStation(movingRobot, map, robots);
+            var bestStation = FindBestFreeStation(movingRobot, map, robots);
+
+            var targetStation = nearestStation ?? bestStation;
+            var stepCloserPosition = GetOneStepCloser(movingRobot.Position, targetStation?.Position);
+
+            return new MoveCommand { NewPosition = stepCloserPosition };
+        }
     }
 }
