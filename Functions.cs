@@ -10,7 +10,7 @@ namespace FilipKateryna.RobotChallange
         public static int EnergyToMove(Position a, Position b) =>
             (int)(Math.Pow(b.X - a.X, 2.0) + Math.Pow(b.Y - a.Y, 2.0));
 
-        public static int Distance(Position pos1, Position pos2) => 
+        public static int Distance(Position pos1, Position pos2) =>
             Math.Abs(pos1.X - pos2.X) + Math.Abs(pos1.Y - pos2.Y);
 
 
@@ -115,12 +115,16 @@ namespace FilipKateryna.RobotChallange
         public static RobotCommand MoveCloserToStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {
             var nearestStation = FindNearestFreeStation(movingRobot, map, robots);
-            var bestStation = FindBestFreeStation(movingRobot, map, robots);
+            if (nearestStation != null)
+            {
+                var stepCloserPosition = GetOneStepCloser(movingRobot.Position, nearestStation?.Position);
+                if (stepCloserPosition != null && CellIsFree(stepCloserPosition, movingRobot, robots))
+                {
+                    return new MoveCommand { NewPosition = stepCloserPosition };
+                }
+            }
 
-            var targetStation = nearestStation ?? bestStation;
-            var stepCloserPosition = GetOneStepCloser(movingRobot.Position, targetStation?.Position);
-
-            return new MoveCommand { NewPosition = stepCloserPosition };
+            return new MoveCommand { NewPosition = movingRobot.Position };
         }
     }
 }
