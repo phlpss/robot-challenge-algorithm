@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 namespace FilipKateryna.RobotChallange
 {
@@ -12,7 +13,6 @@ namespace FilipKateryna.RobotChallange
 
         public static int Distance(Position pos1, Position pos2) =>
             Math.Abs(pos1.X - pos2.X) + Math.Abs(pos1.Y - pos2.Y);
-
 
         public static int EnergyToBeCollected(Map map, Position robotPos) =>
             map.Stations.Where(station =>
@@ -44,7 +44,9 @@ namespace FilipKateryna.RobotChallange
         public static EnergyStation FindBestFreeStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {
             return map.Stations
-                .Where(station => StationIsFree(station, movingRobot, robots) && Distance(movingRobot.Position, station.Position) > 2)
+                .Where(station => StationIsFree(station, movingRobot, robots)
+                                && Distance(movingRobot.Position, station.Position) > 2
+                                && Distance(movingRobot.Position, station.Position) < 23)
                 .OrderByDescending(station => station.Energy)
                 .ThenBy(station => EnergyToMove(station.Position, movingRobot.Position))
                 .FirstOrDefault();
@@ -98,12 +100,9 @@ namespace FilipKateryna.RobotChallange
             return profit > 0 ? (profit, new MoveCommand { NewPosition = robotToAttack.Position }) : (0, null);
         }
 
-        public static (int Profit, RobotCommand Command) CalculateStationMoveProfit(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots, bool nearest)
+        public static (int Profit, RobotCommand Command) CalculateStationMoveProfit(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {
-            var station = nearest
-                ? FindNearestFreeStation(movingRobot, map, robots)
-                : FindBestFreeStation(movingRobot, map, robots);
-
+            var station = FindBestFreeStation(movingRobot, map, robots);
             if (station == null) return (0, null);
 
             var profit = ProfitFromStationMove(movingRobot, station.Position, station.Energy);
@@ -112,12 +111,17 @@ namespace FilipKateryna.RobotChallange
             return (profit, new MoveCommand { NewPosition = targetPosition });
         }
 
+        public static (int Profit, RobotCommand Command) CalculateEnergyCollectionProfit(Map map, Position robotPosition)
+        {
+            return (EnergyToBeCollected(map, robotPosition), new CollectEnergyCommand());
+        }
+
         public static RobotCommand MoveCloserToStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {
-            var nearestStation = FindNearestFreeStation(movingRobot, map, robots);
-            if (nearestStation != null)
+            var station = FindNearestFreeStation(movingRobot, map, robots);
+            if (station != null)
             {
-                var stepCloserPosition = GetOneStepCloser(movingRobot.Position, nearestStation?.Position);
+                var stepCloserPosition = GetOneStepCloser(movingRobot.Position, station?.Position);
                 if (stepCloserPosition != null && CellIsFree(stepCloserPosition, movingRobot, robots))
                 {
                     return new MoveCommand { NewPosition = stepCloserPosition };

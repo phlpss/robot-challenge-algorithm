@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Robot.Common;
 
 namespace FilipKateryna.RobotChallange
@@ -31,15 +32,20 @@ namespace FilipKateryna.RobotChallange
                 return new CreateNewRobotCommand { NewRobotEnergy = NewRobotEnergy };
             }
 
-            var actionProfits = new Dictionary<string, (int Profit, RobotCommand Command)>
+            var collectEnergyTask = Task.Run(() => Functions.CalculateEnergyCollectionProfit(map, movingRobot.Position));
+            var attackRobotTask   = Task.Run(() => Functions.CalculateAttackProfit(robots, movingRobot));
+            var moveToStationTask = Task.Run(() => Functions.CalculateStationMoveProfit(movingRobot, map, robots));
+
+            Task.WaitAll(collectEnergyTask, attackRobotTask, moveToStationTask);
+
+            var actionProfits = new (int Profit, RobotCommand Command)[]
             {
-                { "CollectEnergy", (Functions.EnergyToBeCollected(map, movingRobot.Position), new CollectEnergyCommand()) },
-                { "AttackRobot", Functions.CalculateAttackProfit(robots, movingRobot) },
-                { "MoveToNearestStation", Functions.CalculateStationMoveProfit(movingRobot, map, robots, nearest: true) },
-                { "MoveToBestStation", Functions.CalculateStationMoveProfit(movingRobot, map, robots, nearest: false) }
+                collectEnergyTask.Result,
+                attackRobotTask.Result,
+                moveToStationTask.Result
             };
 
-            var bestAction = actionProfits.Values.OrderByDescending(a => a.Profit).FirstOrDefault();
+            var bestAction = actionProfits.OrderByDescending(a => a.Profit).FirstOrDefault();
 
             if (bestAction.Profit > 0)
             {
@@ -48,5 +54,6 @@ namespace FilipKateryna.RobotChallange
 
             return Functions.MoveCloserToStation(movingRobot, map, robots);
         }
+
     }
 }
