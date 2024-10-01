@@ -27,7 +27,7 @@ namespace FilipKateryna.RobotChallange
             {
                 new CollectEnergyStrategy(),
                 new AttackRobotStrategy(_profitCalculator),
-                new MoveToStationStrategy(_profitCalculator)
+                new MoveToStationStrategy()
             };
 
             Logger.OnLogRound += (sender, e) => Round++;

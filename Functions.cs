@@ -15,12 +15,6 @@ namespace FilipKateryna.RobotChallange
         public static int Distance(Position pos1, Position pos2) =>
             Math.Abs(pos1.X - pos2.X) + Math.Abs(pos1.Y - pos2.Y);
 
-        public static bool StationIsFree(EnergyStation station, Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots)
-        {
-            return Enumerable.Range(station.Position.X - 2, 5)
-                .SelectMany(x => Enumerable.Range(station.Position.Y - 2, 5), (x, y) => new Position(x, y))
-                .All(pos => CellIsFree(pos, movingRobot, robots));
-        }
 
         public static bool CellIsFree(Position cell, Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots)
         {
@@ -28,22 +22,18 @@ namespace FilipKateryna.RobotChallange
                          .All(robot => robot.Position != cell);
         }
 
+        public static bool StationIsFree(EnergyStation station, Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots)
+        {
+            return Enumerable.Range(station.Position.X - 2, 5)
+                .SelectMany(x => Enumerable.Range(station.Position.Y - 2, 5), (x, y) => new Position(x, y))
+                .All(pos => CellIsFree(pos, movingRobot, robots));
+        }
+
         public static EnergyStation FindNearestFreeStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {
             return map.Stations
                 .Where(station => StationIsFree(station, movingRobot, robots) && Distance(movingRobot.Position, station.Position) > 2)
                 .OrderBy(station => EnergyToMove(station.Position, movingRobot.Position))
-                .FirstOrDefault();
-        }
-
-        public static EnergyStation FindBestFreeStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
-        {
-            return map.Stations
-                .Where(station => StationIsFree(station, movingRobot, robots)
-                                && Distance(movingRobot.Position, station.Position) > 2
-                                && Distance(movingRobot.Position, station.Position) < 23)
-                .OrderByDescending(station => station.Energy)
-                .ThenBy(station => EnergyToMove(station.Position, movingRobot.Position))
                 .FirstOrDefault();
         }
 
@@ -68,18 +58,7 @@ namespace FilipKateryna.RobotChallange
         public static List<Robot.Common.Robot> GetMyRobots(IList<Robot.Common.Robot> allRobots) =>
             allRobots.Where(robot => robot.OwnerName.Equals("Filip Kateryna")).ToList();
 
-        public static Position FindNearestCollectablePosition(Position robotPosition, Position stationPosition, int radius)
-        {
-            return Enumerable.Range(stationPosition.X - radius, 2 * radius + 1)
-                .SelectMany(x => Enumerable.Range(stationPosition.Y - radius, 2 * radius + 1), (x, y) => new Position(x, y))
-                .OrderBy(pos => EnergyToMove(robotPosition, pos))
-                .FirstOrDefault();
-        }
 
-        public static int ProfitFromStationMove(Robot.Common.Robot movingRobot, Position stationPosition, int stationEnergy)
-        {
-            var nearestCollectablePosition = FindNearestCollectablePosition(movingRobot.Position, stationPosition, 2);
-            return stationEnergy - EnergyToMove(movingRobot.Position, nearestCollectablePosition);
-        }
+
     }
 }
