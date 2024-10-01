@@ -59,7 +59,7 @@ namespace FilipKateryna.RobotChallange
         public static Tuple<Robot.Common.Robot, int> FindBestRobotToAttack(IList<Robot.Common.Robot> robots, Robot.Common.Robot currentRobot)
         {
             var bestAttack = robots
-                .Where(robot => robot != currentRobot && !robot.OwnerName.Equals(currentRobot.OwnerName))
+                .Where(robot => !robot.OwnerName.Equals(currentRobot.OwnerName))
                 .Select(robot => new
                 {
                     Robot = robot,
@@ -87,8 +87,8 @@ namespace FilipKateryna.RobotChallange
 
         public static int ProfitFromStationMove(Robot.Common.Robot movingRobot, Position stationPosition, int stationEnergy)
         {
-            var nearestCollectablePosition = Functions.FindNearestCollectablePosition(movingRobot.Position, stationPosition, 2);
-            return stationEnergy - Functions.EnergyToMove(movingRobot.Position, nearestCollectablePosition);
+            var nearestCollectablePosition = FindNearestCollectablePosition(movingRobot.Position, stationPosition, 2);
+            return stationEnergy - EnergyToMove(movingRobot.Position, nearestCollectablePosition);
         }
     }
 }
