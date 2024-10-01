@@ -9,7 +9,6 @@ namespace FilipKateryna.RobotChallange
 {
     public interface IProfitCalculator
     {
-        (int Profit, RobotCommand Command) CalculateEnergyCollectionProfit(Map map, Position robotPosition);
         (int Profit, RobotCommand Command) CalculateAttackProfit(IList<Robot.Common.Robot> robots, Robot.Common.Robot movingRobot);
         (int Profit, RobotCommand Command) CalculateStationMoveProfit(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots);
         (int Profit, RobotCommand Command) DetermineBestAction(Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots,
@@ -17,11 +16,6 @@ namespace FilipKateryna.RobotChallange
     }
     public class ProfitCalculator : IProfitCalculator
     {
-        public (int Profit, RobotCommand Command) CalculateEnergyCollectionProfit(Map map, Position robotPosition)
-        {
-            var profit = Functions.CalculateEnergyToBeCollected(map, robotPosition);
-            return (profit, new CollectEnergyCommand());
-        }
 
         public (int Profit, RobotCommand Command) CalculateStationMoveProfit(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {

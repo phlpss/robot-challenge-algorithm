@@ -12,15 +12,6 @@ namespace FilipKateryna.RobotChallange
         public static int EnergyToMove(Position a, Position b) =>
             (int)(Math.Pow(b.X - a.X, 2.0) + Math.Pow(b.Y - a.Y, 2.0));
 
-        public static int CalculateEnergyToBeCollected(Map map, Position robotPos)
-        {
-            return map.Stations
-                .Where(station =>
-                    Math.Abs(station.Position.X - robotPos.X) <= 2 &&
-                    Math.Abs(station.Position.Y - robotPos.Y) <= 2)
-                .Sum(station => station.Energy);
-        }
-
         public static int Distance(Position pos1, Position pos2) =>
             Math.Abs(pos1.X - pos2.X) + Math.Abs(pos1.Y - pos2.Y);
 
