@@ -14,7 +14,6 @@ namespace FilipKateryna.RobotChallange
     }
     public class ProfitCalculator : IProfitCalculator
     {
-
         public (int Profit, RobotCommand Command) DetermineBestAction(Robot.Common.Robot movingRobot,
             IList<Robot.Common.Robot> robots, Map map, IEnumerable<IRobotActionStrategy> actionStrategies)
         {

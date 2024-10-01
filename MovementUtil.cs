@@ -28,6 +28,5 @@ namespace FilipKateryna.RobotChallange
                 .SelectMany(x => Enumerable.Range(station.Position.Y - 2, 5), (x, y) => new Position(x, y))
                 .All(pos => CellIsFree(pos, movingRobot, robots));
         }
-
     }
 }

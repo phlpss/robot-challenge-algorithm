@@ -44,6 +44,5 @@ namespace FilipKateryna.RobotChallange
                 .OrderBy(station => MovementUtil.EnergyToMove(station.Position, movingRobot.Position))
                 .FirstOrDefault();
         }
-
     }
 }
