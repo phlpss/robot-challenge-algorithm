@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace FilipKateryna.RobotChallange
 {
-    public class RobotManager
+    public interface IRobotManager
+    {
+        RobotCommand CreateRobotIfNeeded(Robot.Common.Robot movingRobot, ref int robotCount);
+    }
+
+    public class RobotManager : IRobotManager
     {
         private const int MaxRobots = 100;
         private const int NewRobotEnergyThreshold = 300;
