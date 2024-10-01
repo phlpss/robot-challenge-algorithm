@@ -8,9 +8,9 @@ namespace FilipKateryna.RobotChallange
 {
     public class FilipKaterynaAlgorithm : IRobotAlgorithm
     {
-        private readonly IRobotManager _robotManager;
-        private readonly IMovementManager _movementManager;
-        private readonly IProfitCalculator _profitCalculator;
+        private readonly IRobotCreationManager _robotCreationManager;
+        private readonly IPositionManager _positionManager;
+        private readonly IActionProfitEvaluator _actionProfitEvaluator;
         private readonly IEnumerable<IRobotActionStrategy> _actionStrategies;
 
         private int robotCount = 10;
@@ -19,9 +19,9 @@ namespace FilipKateryna.RobotChallange
 
         public FilipKaterynaAlgorithm()
         {
-            _robotManager = new RobotManager();
-            _movementManager = new MovementManager();
-            _profitCalculator = new ProfitCalculator();
+            _robotCreationManager = new RobotCreationManager();
+            _positionManager = new PositionManager();
+            _actionProfitEvaluator = new ActionProfitEvaluator();
 
             _actionStrategies = new List<IRobotActionStrategy>
             {
@@ -40,16 +40,16 @@ namespace FilipKateryna.RobotChallange
             if (Round == 51)
                 return new CollectEnergyCommand();
 
-            var createCommand = _robotManager.CreateRobotIfNeeded(movingRobot, ref robotCount);
+            var createCommand = _robotCreationManager.CreateRobotIfNeeded(movingRobot, ref robotCount);
             if (createCommand != null)
                 return createCommand;
 
-            var bestAction = _profitCalculator.DetermineBestAction(movingRobot, robots, map, _actionStrategies);
+            var bestAction = _actionProfitEvaluator.DetermineBestAction(movingRobot, robots, map, _actionStrategies);
 
             if (bestAction.Profit > 0)
                 return bestAction.Command;
 
-            return _movementManager.MoveCloserToStation(movingRobot, map, robots);
+            return _positionManager.MoveCloserToStation(movingRobot, map, robots);
         }
     }
 

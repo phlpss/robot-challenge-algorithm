@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace FilipKateryna.RobotChallange
 {
-    public interface IMovementManager
+    public interface IPositionManager
     {
         RobotCommand MoveCloserToStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots);
     }
 
-    public class MovementManager : IMovementManager
+    public class PositionManager : IPositionManager
     {
         public RobotCommand MoveCloserToStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {
@@ -39,7 +39,7 @@ namespace FilipKateryna.RobotChallange
         private EnergyStation FindNearestFreeStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {
             return map.Stations
-                .Where(station => MovementUtil.StationIsFree(station, movingRobot, robots) 
+                .Where(station => MovementUtil.StationIsFree(station, movingRobot, robots)
                                && MovementUtil.Distance(movingRobot.Position, station.Position) > 2)
                 .OrderBy(station => MovementUtil.EnergyToMove(station.Position, movingRobot.Position))
                 .FirstOrDefault();

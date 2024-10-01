@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace FilipKateryna.RobotChallange
 {
-    public interface IProfitCalculator
+    public interface IActionProfitEvaluator
     {
         (int Profit, RobotCommand Command) DetermineBestAction(Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots,
                                                                Map map, IEnumerable<IRobotActionStrategy> actionStrategies);
     }
-    public class ProfitCalculator : IProfitCalculator
+    public class ActionProfitEvaluator : IActionProfitEvaluator
     {
         public (int Profit, RobotCommand Command) DetermineBestAction(Robot.Common.Robot movingRobot,
             IList<Robot.Common.Robot> robots, Map map, IEnumerable<IRobotActionStrategy> actionStrategies)
