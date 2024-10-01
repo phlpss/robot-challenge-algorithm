@@ -24,9 +24,9 @@ namespace FilipKateryna.RobotChallange
                 .Select(robot => new
                 {
                     Robot = robot,
-                    MoveCost = Functions.EnergyToMove(currentRobot.Position, robot.Position),
+                    MoveCost = MovementUtil.EnergyToMove(currentRobot.Position, robot.Position),
                     Profit = (int)(robot.Energy * AttackPercentageGain - AttackMoveCost - 
-                                   Functions.EnergyToMove(currentRobot.Position, robot.Position))
+                                   MovementUtil.EnergyToMove(currentRobot.Position, robot.Position))
                 })
                 .Where(r => r.MoveCost <= r.Robot.Energy && r.Profit > 0)
                 .OrderByDescending(r => r.Profit)

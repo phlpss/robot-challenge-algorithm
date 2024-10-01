@@ -25,25 +25,25 @@ namespace FilipKateryna.RobotChallange
         public EnergyStation FindBestFreeStation(Robot.Common.Robot movingRobot, Map map, IList<Robot.Common.Robot> robots)
         {
             return map.Stations
-                .Where(station => Functions.StationIsFree(station, movingRobot, robots)
-                                && Functions.Distance(movingRobot.Position, station.Position) > 2
-                                && Functions.Distance(movingRobot.Position, station.Position) < 23)
+                .Where(station => MovementUtil.StationIsFree(station, movingRobot, robots)
+                                && MovementUtil.Distance(movingRobot.Position, station.Position) > 2
+                                && MovementUtil.Distance(movingRobot.Position, station.Position) < 23)
                 .OrderByDescending(station => station.Energy)
-                .ThenBy(station => Functions.EnergyToMove(station.Position, movingRobot.Position))
+                .ThenBy(station => MovementUtil.EnergyToMove(station.Position, movingRobot.Position))
                 .FirstOrDefault();
         }
 
         public int ProfitFromStationMove(Robot.Common.Robot movingRobot, Position stationPosition, int stationEnergy)
         {
             var nearestCollectablePosition = FindNearestCollectablePosition(movingRobot.Position, stationPosition, 2);
-            return stationEnergy - Functions.EnergyToMove(movingRobot.Position, nearestCollectablePosition);
+            return stationEnergy - MovementUtil.EnergyToMove(movingRobot.Position, nearestCollectablePosition);
         }
 
         public Position FindNearestCollectablePosition(Position robotPosition, Position stationPosition, int radius)
         {
             return Enumerable.Range(stationPosition.X - radius, 2 * radius + 1)
                 .SelectMany(x => Enumerable.Range(stationPosition.Y - radius, 2 * radius + 1), (x, y) => new Position(x, y))
-                .OrderBy(pos => Functions.EnergyToMove(robotPosition, pos))
+                .OrderBy(pos => MovementUtil.EnergyToMove(robotPosition, pos))
                 .FirstOrDefault();
         }
     }
