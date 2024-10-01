@@ -9,16 +9,31 @@ namespace FilipKateryna.RobotChallange
 {
     public class AttackRobotStrategy : IRobotActionStrategy
     {
-        private readonly IProfitCalculator _profitCalculator;
-
-        public AttackRobotStrategy(IProfitCalculator profitCalculator)
-        {
-            _profitCalculator = profitCalculator;
-        }
-
+        private const double AttackPercentageGain = 0.1;
+        private const double AttackMoveCost = 30;
         public (int Profit, RobotCommand Command) Execute(Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots, Map map)
         {
-            return _profitCalculator.CalculateAttackProfit(robots, movingRobot);
+            var (robotToAttack, profit) = FindBestRobotToAttack(robots, movingRobot);
+            return profit > 0 ? (profit, new MoveCommand { NewPosition = robotToAttack.Position }) : (0, null);
+        }
+
+        public Tuple<Robot.Common.Robot, int> FindBestRobotToAttack(IList<Robot.Common.Robot> robots, Robot.Common.Robot currentRobot)
+        {
+            var bestAttack = robots
+                .Where(robot => !robot.OwnerName.Equals(currentRobot.OwnerName))
+                .Select(robot => new
+                {
+                    Robot = robot,
+                    MoveCost = Functions.EnergyToMove(currentRobot.Position, robot.Position),
+                    Profit = (int)(robot.Energy * AttackPercentageGain - AttackMoveCost - 
+                                   Functions.EnergyToMove(currentRobot.Position, robot.Position))
+                })
+                .Where(r => r.MoveCost <= r.Robot.Energy && r.Profit > 0)
+                .OrderByDescending(r => r.Profit)
+                .Select(r => Tuple.Create(r.Robot, r.Profit))
+                .FirstOrDefault();
+
+            return bestAttack ?? new Tuple<Robot.Common.Robot, int>(null, 0);
         }
     }
 

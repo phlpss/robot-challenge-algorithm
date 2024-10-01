@@ -37,24 +37,6 @@ namespace FilipKateryna.RobotChallange
                 .FirstOrDefault();
         }
 
-        public static Tuple<Robot.Common.Robot, int> FindBestRobotToAttack(IList<Robot.Common.Robot> robots, Robot.Common.Robot currentRobot)
-        {
-            var bestAttack = robots
-                .Where(robot => !robot.OwnerName.Equals(currentRobot.OwnerName))
-                .Select(robot => new
-                {
-                    Robot = robot,
-                    MoveCost = EnergyToMove(currentRobot.Position, robot.Position),
-                    Profit = (int)(robot.Energy * 0.1 - 30 - EnergyToMove(currentRobot.Position, robot.Position))
-                })
-                .Where(r => r.MoveCost <= r.Robot.Energy && r.Profit > 0)
-                .OrderByDescending(r => r.Profit)
-                .Select(r => Tuple.Create(r.Robot, r.Profit))
-                .FirstOrDefault();
-
-            return bestAttack ?? new Tuple<Robot.Common.Robot, int>(null, 0);
-        }
-
         public static List<Robot.Common.Robot> GetMyRobots(IList<Robot.Common.Robot> allRobots) =>
             allRobots.Where(robot => robot.OwnerName.Equals("Filip Kateryna")).ToList();
 

@@ -26,7 +26,7 @@ namespace FilipKateryna.RobotChallange
             _actionStrategies = new List<IRobotActionStrategy>
             {
                 new CollectEnergyStrategy(),
-                new AttackRobotStrategy(_profitCalculator),
+                new AttackRobotStrategy(),
                 new MoveToStationStrategy()
             };
 
