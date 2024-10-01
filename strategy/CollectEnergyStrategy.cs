@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilipKateryna.RobotChallange
+namespace FilipKateryna.RobotChallenge
 {
     public class CollectEnergyStrategy : IRobotActionStrategy
     {

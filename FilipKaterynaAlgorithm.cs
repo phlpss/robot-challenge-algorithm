@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Robot.Common;
 
-namespace FilipKateryna.RobotChallange
+namespace FilipKateryna.RobotChallenge
 {
     public class FilipKaterynaAlgorithm : IRobotAlgorithm
     {

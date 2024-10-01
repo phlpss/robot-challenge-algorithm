@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilipKateryna.RobotChallange", "FilipKateryna.RobotChallange.csproj", "{0C5F2608-48B6-498C-B95D-3C5FD0DE5E3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilipKateryna.RobotChallenge", "FilipKateryna.RobotChallenge.csproj", "{0C5F2608-48B6-498C-B95D-3C5FD0DE5E3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilipKateryna.RobotChallange.Test", "..\FilipKateryna.RobotChallange.Test\FilipKateryna.RobotChallange.Test.csproj", "{E159D3D7-C21D-471E-BC36-F67C5F7F0384}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilipKateryna.RobotChallenge.Test", "..\FilipKateryna.RobotChallange.Test\FilipKateryna.RobotChallenge.Test.csproj", "{E159D3D7-C21D-471E-BC36-F67C5F7F0384}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

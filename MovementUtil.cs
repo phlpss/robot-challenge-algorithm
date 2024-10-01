@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static System.Collections.Specialized.BitVector32;
 
-namespace FilipKateryna.RobotChallange
+namespace FilipKateryna.RobotChallenge
 {
     public static class MovementUtil
     {
