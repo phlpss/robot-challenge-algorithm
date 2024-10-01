@@ -10,6 +10,7 @@ namespace FilipKateryna.RobotChallange
     {
         private readonly IRobotManager _robotManager;
         private readonly IMovementManager _movementManager;
+        private readonly IProfitCalculator _profitCalculator;
         private readonly IEnumerable<IRobotActionStrategy> _actionStrategies;
 
         private int robotCount = 10;
@@ -20,11 +21,13 @@ namespace FilipKateryna.RobotChallange
         {
             _robotManager = new RobotManager();
             _movementManager = new MovementManager();
+            _profitCalculator = new ProfitCalculator();
+
             _actionStrategies = new List<IRobotActionStrategy>
             {
-                new CollectEnergyStrategy(new ProfitCalculator()),
-                new AttackRobotStrategy(new ProfitCalculator()),
-                new MoveToStationStrategy(new ProfitCalculator())
+                new CollectEnergyStrategy(_profitCalculator),
+                new AttackRobotStrategy(_profitCalculator),
+                new MoveToStationStrategy(_profitCalculator)
             };
 
             Logger.OnLogRound += (sender, e) => Round++;
@@ -34,17 +37,17 @@ namespace FilipKateryna.RobotChallange
         {
             var movingRobot = robots[robotToMoveIndex];
 
-            if (Round > 50) return new CollectEnergyCommand();
+            if (Round == 51)
+                return new CollectEnergyCommand();
 
             var createCommand = _robotManager.CreateRobotIfNeeded(movingRobot, ref robotCount);
-            if (createCommand != null) return createCommand;
+            if (createCommand != null)
+                return createCommand;
 
-            var tasks = _actionStrategies.Select(strategy => Task.Run(() => strategy.Execute(movingRobot, robots, map))).ToArray();
-            Task.WaitAll(tasks);
+            var bestAction = _profitCalculator.DetermineBestAction(movingRobot, robots, map, _actionStrategies);
 
-            var actionProfits = tasks.Select(t => t.Result).OrderByDescending(a => a.Profit).FirstOrDefault();
-
-            if (actionProfits.Profit > 0) return actionProfits.Command;
+            if (bestAction.Profit > 0)
+                return bestAction.Command;
 
             return _movementManager.MoveCloserToStation(movingRobot, map, robots);
         }
