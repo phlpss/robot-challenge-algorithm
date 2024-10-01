@@ -8,9 +8,10 @@ namespace FilipKateryna.RobotChallange
 {
     public class FilipKaterynaAlgorithm : IRobotAlgorithm
     {
-        private const int MaxRobots = 100;
-        private const int NewRobotEnergyThreshold = 300;
-        private const int NewRobotEnergy = 50;
+        private readonly RobotManager _robotManager;
+        private readonly EnergyCalculator _energyCalculator;
+        private readonly MovementManager _movementManager;
+        private readonly Functions _functions;
 
         private int robotCount = 10;
         public string Author => "Filip Kateryna";
@@ -18,31 +19,35 @@ namespace FilipKateryna.RobotChallange
 
         public FilipKaterynaAlgorithm()
         {
+            _robotManager = new RobotManager();
+            _energyCalculator = new EnergyCalculator();
+            _movementManager = new MovementManager();
+            _functions = new Functions();
+
             Logger.OnLogRound += (sender, e) => Round++;
         }
 
         public RobotCommand DoStep(IList<Robot.Common.Robot> robots, int robotToMoveIndex, Map map)
         {
-            var myRobots = Functions.GetMyRobots(robots);
             var movingRobot = robots[robotToMoveIndex];
 
-            if (movingRobot.Energy >= NewRobotEnergyThreshold && robotCount < MaxRobots)
+            var createCommand = _robotManager.CreateRobotIfNeeded(movingRobot, ref robotCount);
+            if (createCommand != null)
             {
-                robotCount++;
-                return new CreateNewRobotCommand { NewRobotEnergy = NewRobotEnergy };
+                return createCommand;
             }
 
-            var collectEnergyTask = Task.Run(() => Functions.CalculateEnergyCollectionProfit(map, movingRobot.Position));
-            var attackRobotTask   = Task.Run(() => Functions.CalculateAttackProfit(robots, movingRobot));
-            var moveToStationTask = Task.Run(() => Functions.CalculateStationMoveProfit(movingRobot, map, robots));
+            var collectEnergyTask = Task.Run(() => _energyCalculator.CalculateEnergyCollectionProfit(map, movingRobot.Position));
+            var attackRobotTask = Task.Run(() => _functions.CalculateAttackProfit(robots, movingRobot));
+            var moveToStationTask = Task.Run(() => _functions.CalculateStationMoveProfit(movingRobot, map, robots));
 
             Task.WaitAll(collectEnergyTask, attackRobotTask, moveToStationTask);
 
             var actionProfits = new (int Profit, RobotCommand Command)[]
             {
-                collectEnergyTask.Result,
-                attackRobotTask.Result,
-                moveToStationTask.Result
+            collectEnergyTask.Result,
+            attackRobotTask.Result,
+            moveToStationTask.Result
             };
 
             var bestAction = actionProfits.OrderByDescending(a => a.Profit).FirstOrDefault();
@@ -52,8 +57,8 @@ namespace FilipKateryna.RobotChallange
                 return bestAction.Command;
             }
 
-            return Functions.MoveCloserToStation(movingRobot, map, robots);
+            return _movementManager.MoveCloserToStation(movingRobot, map, robots, _functions);
         }
-
     }
+
 }
