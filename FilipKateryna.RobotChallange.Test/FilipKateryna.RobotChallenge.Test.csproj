@@ -123,7 +123,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FilipKateryna.RobotChallenge\FilipKateryna.RobotChallenge.csproj">
+    <ProjectReference Include="..\FilipKateryna.RobotChallange\FilipKateryna.RobotChallenge.csproj">
       <Project>{0c5f2608-48b6-498c-b95d-3c5fd0de5e3d}</Project>
       <Name>FilipKateryna.RobotChallenge</Name>
     </ProjectReference>
