@@ -1,11 +1,9 @@
-﻿using Robot.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Robot.Common;
 
-namespace FilipKateryna.RobotChallenge
+namespace FilipKateryna.RobotChallenge.strategy
 {
     public class AttackRobotStrategy : IRobotActionStrategy
     {
@@ -28,7 +26,7 @@ namespace FilipKateryna.RobotChallenge
                     Profit = (int)(robot.Energy * AttackPercentageGain - AttackMoveCost - 
                                    MovementUtil.EnergyToMove(currentRobot.Position, robot.Position))
                 })
-                .Where(r => r.MoveCost <= r.Robot.Energy && r.Profit > 0)
+                .Where(r => r.MoveCost <= r.Robot.Energy && r.Profit > 0)     
                 .OrderByDescending(r => r.Profit)
                 .Select(r => Tuple.Create(r.Robot, r.Profit))
                 .FirstOrDefault();

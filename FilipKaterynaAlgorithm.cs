@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using FilipKateryna.RobotChallenge.strategy;
 using Robot.Common;
 
 namespace FilipKateryna.RobotChallenge
@@ -15,7 +13,7 @@ namespace FilipKateryna.RobotChallenge
 
         private int robotCount = 10;
         public string Author => "Filip Kateryna";
-        public int Round { get; private set; }
+        public int Round { get; set; }
 
         public FilipKaterynaAlgorithm()
         {
